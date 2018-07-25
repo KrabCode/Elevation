@@ -8,7 +8,7 @@ public class MainApp extends PApplet{
 
     public static void main(String[] args) {PApplet.main("MainApp");}
 
-    int scl = 50;
+    int scl = 100;
     float r = 250;
 
     float[][] globe;
@@ -26,8 +26,7 @@ public class MainApp extends PApplet{
         cam = new PeasyCam(this, 600);
         myShader = loadShader("colorfrag.glsl", "colorvert.glsl");
         heightMap = loadImage("elevation-map.jpg");
-        colorMap = loadImage("Equirectangular_projection_SW.jpg");
-        heightMap.resize(heightMap.width/4, heightMap.height/4);
+        colorMap = loadImage("topo.jpg");
     }
 
     public void draw() {
@@ -47,14 +46,12 @@ public class MainApp extends PApplet{
         textureMode(NORMAL);
         noStroke();
 
-        for (int x = 0; x < scl; x++) {
+        for (int x = 0; x <= scl; x++) {
             beginShape(TRIANGLE_STRIP);
             texture(colorMap);
             for (int y = 0; y <= scl; y++) {
                 fill(map(y, 0, scl, 0, 255));
-                float zScl = .5f;
-//                float elev = 50* noise(x*nScl, y*nScl, radians(frameCount/8f));
-//                float elev1 = 50* noise((x+1)*nScl, y*nScl, radians(frameCount/8f));
+                float zScl = .2f;
                 float elev = zScl*getHeightAt(x,y);
                 float elev1 = zScl*getHeightAt(x+1,y);
                 PVector v0 = getPointOnSphere(x, y, scl, scl, r+elev);
