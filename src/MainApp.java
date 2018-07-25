@@ -8,7 +8,7 @@ public class MainApp extends PApplet{
 
     public static void main(String[] args) {PApplet.main("MainApp");}
 
-    int scl = 100;
+    int scl = 250;
     float r = 250;
 
     float[][] globe;
@@ -25,8 +25,8 @@ public class MainApp extends PApplet{
     public void setup() {
         cam = new PeasyCam(this, 600);
         myShader = loadShader("colorfrag.glsl", "colorvert.glsl");
-        heightMap = loadImage("elevation-map.jpg");
-        colorMap = loadImage("topo.jpg");
+        heightMap = loadImage("elev.jpg");
+        colorMap = loadImage("topo.jpg"); //https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg
     }
 
     public void draw() {
