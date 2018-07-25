@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Processing template
+.DS_Store
+applet
+application.linux32
+application.linux64
+application.windows32
+application.windows64
+application.macosx
+
+.gitignore
+.idea/
+L.iml
+out/
