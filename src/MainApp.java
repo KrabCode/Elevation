@@ -10,8 +10,6 @@ public class MainApp extends PApplet{
 
     int scl = 250;
     float r = 250;
-
-    float[][] globe;
     PeasyCam cam;
     PShader myShader;
     PImage colorMap;
@@ -19,14 +17,14 @@ public class MainApp extends PApplet{
 
     public void settings() {
 //        size(800,600, P3D);
-        fullScreen(P3D,1);
+        fullScreen(P3D,2);
     }
 
     public void setup() {
         cam = new PeasyCam(this, 600);
         myShader = loadShader("colorfrag.glsl", "colorvert.glsl");
         heightMap = loadImage("elev.jpg");
-        colorMap = loadImage("topo.jpg"); //https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg
+        colorMap = loadImage("topo.jpg");
     }
 
     public void draw() {
@@ -35,7 +33,6 @@ public class MainApp extends PApplet{
         rotateX(radians(90));
         rotateZ(radians(-frameCount/8f));
         drawSphere(scl, r);
-//        xyz(r*1.2f);
     }
 
     private void drawSphere(float scl, float r) {
@@ -45,20 +42,23 @@ public class MainApp extends PApplet{
         shader(myShader);
         textureMode(NORMAL);
         noStroke();
-
+        fill(0);
         for (int x = 0; x <= scl; x++) {
             beginShape(TRIANGLE_STRIP);
             texture(colorMap);
             for (int y = 0; y <= scl; y++) {
-                fill(map(y, 0, scl, 0, 255));
-                float zScl = .2f;
+
+                float zScl = .1f;
                 float elev = zScl*getHeightAt(x,y);
                 float elev1 = zScl*getHeightAt(x+1,y);
-                PVector v0 = getPointOnSphere(x, y, scl, scl, r+elev);
-                PVector v1 = getPointOnSphere(x+1, y, scl, scl, r+elev1);
+
                 float u = map(x, 0, scl, 0, 1);
                 float u1 = map(x+1, 0, scl, 0, 1);
                 float v = map(y, 0, scl, 0, 1);
+
+                PVector v0 = getPointOnSphere(x, y, scl, scl, r+elev);
+                PVector v1 = getPointOnSphere(x+1, y, scl, scl, r+elev1);
+
                 vertex(v0.x, v0.y, v0.z, u,v);
                 vertex(v1.x, v1.y, v1.z, u1,v);
             }
@@ -73,6 +73,23 @@ public class MainApp extends PApplet{
             return 0;
         }
         return brightness(heightMap.pixels[targetX+targetY*heightMap.width]);
+    }
+    private float getAvgHeightAt(int x0, int y0) {
+        float totalElev = 0;
+        int count = 0;
+        for(int x = x0 - scl/2; x < x0 + scl/2; x++)
+        {
+            for(int y = y0 - scl/2; y < y0 + scl/2; y++)
+            {
+            int targetX = round(map(x,0, scl, 0, heightMap.width));
+            int targetY = round(map(y,0, scl, 0, heightMap.height));
+            if(targetX < 0  ||targetX >= heightMap.width || targetY < 0 || targetY >= heightMap.height) {
+                continue;
+            }
+            totalElev += brightness(heightMap.pixels[targetX+targetY*heightMap.width]);
+            count++;
+        }}
+        return totalElev / count;
     }
 
     PVector getPointOnSphere(float x, float y, float xMax, float yMax, float r){
